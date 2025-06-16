@@ -8,6 +8,9 @@ Train XGBoost model from Feature Store data using SageMaker SDK locally.
 4. Saves and uploads the training dataset
 5. Trains the model on SageMaker with ml.m5.large instance
 """
+"""
+Train XGBoost model from Feature Store data using SageMaker SDK locally.
+"""
 
 import boto3
 import sagemaker
@@ -16,15 +19,23 @@ from sagemaker.inputs import TrainingInput
 from sagemaker.xgboost.estimator import XGBoost
 import pandas as pd
 from sklearn.model_selection import train_test_split
+from dotenv import load_dotenv
+import os
+
+# Load environment variables
+load_dotenv(dotenv_path="traffic/.env")
+
+region = os.getenv("AWS_REGION")
+role = os.getenv("SAGEMAKER_ROLE")
+bucket = os.getenv("S3_BUCKET")
+prefix = os.getenv("S3_PREFIX")
+feature_group_name = os.getenv("FEATURE_GROUP_NAME")
 
 # Setup
 session = sagemaker.Session()
-role = sagemaker.get_execution_role()
-bucket = session.default_bucket()
-prefix = "xgboost-traffic-local"
 
 # Connect to Feature Store
-feature_group = FeatureGroup(name="traffic-feature-group-local", sagemaker_session=session)
+feature_group = FeatureGroup(name=feature_group_name, sagemaker_session=session)
 query = feature_group.athena_query()
 query_string = f'SELECT * FROM "{query.table_name}"'
 query.run(query_string=query_string, output_location=f"s3://{bucket}/{prefix}/athena/")
@@ -57,8 +68,3 @@ xgb = XGBoost(
 
 xgb.fit({"train": TrainingInput(s3_train_path, content_type="csv")})
 print("✅ Model training completed.")
-
-# Write the files
-for path, content in file_contents.items():
-    with open(path, "w") as f:
-        f.write(content)
