@@ -109,7 +109,6 @@ ENDPOINT_NAME=xgboost-traffic-local-endpoint
 
 3. IAM Role Permissions (SAGEMAKER_ROLE)
 Make sure the IAM role has access to:
-
 AmazonS3FullAccess
 AmazonSageMakerFullAccess
 AthenaFullAccess

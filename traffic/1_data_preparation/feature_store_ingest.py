@@ -20,7 +20,7 @@ feature_group_name = os.getenv("FEATURE_GROUP_NAME")
 
 # Initialize SageMaker session
 session = sagemaker.Session()
-df = pd.read_csv("traffic/1_data_preparation/traffic_data.csv")
+df = pd.read_csv("/workspaces/sagemaker-mlops-lab/traffic/1_data_preparation/traffic_data.csv")
 df["timestamp"] = pd.to_datetime(df["timestamp"]).astype(str)  # Ensure ISO format
 
 # Create Feature Group
