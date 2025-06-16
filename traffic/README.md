@@ -71,12 +71,25 @@ Option 1: Local development using Boto3 + SageMaker SDK:
 ✅ python-dotenv: For loading .env configurations
 
 
-
 # Setup python virtual environment
 @btholath ➜ /workspaces/sagemaker-mlops-lab (main) $ python -m venv .venv
 @btholath ➜ /workspaces/sagemaker-mlops-lab (main) $ source .venv/bin/activate
 @btholath ➜ /workspaces/sagemaker-mlops-lab (main) $ pip install --upgrade pip
 (.venv) @btholath ➜ /workspaces/sagemaker-mlops-lab (main) $ pip install -r ./traffic/requirements.txt
+
+
+# Setup AWS CLI
+(.venv) @btholath ➜ /workspaces
+(.venv) @btholath ➜ /workspacescurl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+(.venv) @btholath ➜ /workspacesunzip awscliv2.zip
+(.venv) @btholath ➜ /workspacessudo ./aws/install
+or
+(.venv) @btholath ➜ /workspaces./aws/install -i ~/.local/aws-cli -b ~/.local/bin
+export PATH=$PATH:~/.local/bin
+(.venv) @btholath ➜ /workspaces/usr/local/bin/aws --version 
+(.venv) @btholath ➜ /workspaces $ aws configure
+(.venv) @btholath ➜ /workspaces $ aws sts get-caller-identity
+
 
 # Pre-requisites
 ✅ Global Setup (Before Any Script)
