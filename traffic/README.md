@@ -78,6 +78,11 @@ Option 1: Local development using Boto3 + SageMaker SDK:
 (.venv) @btholath ➜ /workspaces/sagemaker-mlops-lab (main) $ pip install -r ./traffic/requirements.txt
 
 
+# cleanup aws resources
+aws sagemaker delete-feature-group --feature-group-name traffic-feature-group-local
+aws sagemaker list-feature-groups
+
+
 # Setup AWS CLI
 (.venv) @btholath ➜ /workspaces
 (.venv) @btholath ➜ /workspacescurl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
