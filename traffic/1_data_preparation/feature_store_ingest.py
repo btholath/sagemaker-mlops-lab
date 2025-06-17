@@ -32,9 +32,8 @@ df = pd.read_csv(csv_path)
 
 # Convert timestamp column to ISO 8601 string
 print(df["timestamp"].head())
-df["timestamp"] = pd.to_datetime(df["timestamp"]).astype(str)
-
-
+#df["timestamp"] = pd.to_datetime(df["timestamp"]).astype(str)
+df["timestamp"] = pd.to_datetime(df["timestamp"], format="%m/%d/%y %H:%M").astype(str)
 
 
 # Define FeatureGroup
