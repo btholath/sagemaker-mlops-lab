@@ -66,6 +66,44 @@ if fg_desc:
             results.append([f"Policy Attached: {policy}", status, policy])
     except Exception as e:
         results.append(["IAM Role Check", "❌", str(e)])
+    
+    # 5. Run Athena Query to Count Records
+    print("5. Count records via Athena")
+
+    if fg_desc:
+        table_name = fg_desc.get("OfflineStoreConfig", {}).get("DataCatalogConfig", {}).get("TableName")
+        database_name = fg_desc.get("OfflineStoreConfig", {}).get("DataCatalogConfig", {}).get("Database")
+        if table_name and database_name:
+            output_s3_uri = f"s3://{bucket}/{prefix}/athena/results/"
+            query_string = f'SELECT COUNT(*) AS record_count FROM "{database_name}"."{table_name}"'
+
+            try:
+                response = athena.start_query_execution(
+                    QueryString=query_string,
+                    QueryExecutionContext={"Database": database_name},
+                    ResultConfiguration={"OutputLocation": output_s3_uri},
+                )
+                query_execution_id = response["QueryExecutionId"]
+
+                # Wait for query to complete
+                while True:
+                    status = athena.get_query_execution(QueryExecutionId=query_execution_id)["QueryExecution"]["Status"]["State"]
+                    if status in ["SUCCEEDED", "FAILED", "CANCELLED"]:
+                        break
+                    time.sleep(2)
+
+                if status == "SUCCEEDED":
+                    result_response = athena.get_query_results(QueryExecutionId=query_execution_id)
+                    count = int(result_response["ResultSet"]["Rows"][1]["Data"][0]["VarCharValue"])
+                    results.append(["Athena Record Count", "✅", f"{count:,} rows"])
+                else:
+                    results.append(["Athena Record Count", "❌", f"Query failed with status: {status}"])
+
+            except Exception as e:
+                results.append(["Athena Record Count", "❌", str(e)])
+    else:
+        results.append(["Athena Record Count", "❌", "Missing DataCatalogConfig (table/database name)"])
+        
 
 # Output results
 df = pd.DataFrame(results, columns=["Check", "Status", "Details"])

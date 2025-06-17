@@ -1,8 +1,11 @@
 
 # Delete the existing Feature Group
 ```bash
-(.venv) @btholath ➜ /workspaces/sagemaker-mlops-lab/traffic/1_data_preparation (main) $ aws sagemaker delete-feature-group --feature-group-name traffic-feature-group-local
-(.venv) @btholath ➜ /workspaces/sagemaker-mlops-lab/traffic/1_data_preparation (main) $ python feature_store_ingest.py 
+(.venv) @btholath ➜ /workspaces/sagemaker-mlops-lab/traffic/1_data_preparation (main) $ 
+aws sagemaker delete-feature-group --feature-group-name traffic-feature-group-local
+
+(.venv) @btholath ➜ /workspaces/sagemaker-mlops-lab/traffic/1_data_preparation (main) $ 
+python feature_store_ingest.py
 sagemaker.config INFO - Not applying SDK defaults from location: /etc/xdg/sagemaker/config.yaml
 sagemaker.config INFO - Not applying SDK defaults from location: /home/codespace/.config/sagemaker/config.yaml
 0    1/1/23 0:00
