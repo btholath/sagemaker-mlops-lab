@@ -96,17 +96,25 @@ train_data.to_csv("train.csv", index=False, header=False)
 s3_train_path = session.upload_data("train.csv", bucket=bucket, key_prefix=f"{prefix}/train")
 
 # Train Model
+# trains a machine learning model using Amazon SageMaker and the XGBoost algorithm.
+# Here's the CSV file I uploaded to S3. Use a smart algorithm called XGBoost to learn from it. Spin up a virtual machine (ml.m5.large) to do the work. Once done, save the model in this S3 bucket.
 xgb = XGBoost(
-    entry_point=None,
-    framework_version="1.3-1",
-    instance_type="ml.m5.large",
-    instance_count=1,
-    output_path=f"s3://{bucket}/{prefix}/output",
-    role=role,
-    objective="binary:logistic",
-    num_round=100,
-    sagemaker_session=session
+    entry_point=None,   # No custom script; use SageMaker's built-in XGBoost container
+    framework_version="1.3-1",  # Specifies XGBoost version
+    instance_type="ml.m5.large",  # EC2 instance type for training
+    instance_count=1,  # Single instance for training
+    output_path=f"s3://{bucket}/{prefix}/output",  # Where to save the trained model in S3
+    role=role,  # IAM role with permissions for training and S3 access
+    objective="binary:logistic",  # Objective for binary classification problems
+    num_round=100,  # Number of boosting rounds (iterations)
+    sagemaker_session=session  # SageMaker session context
 )
 
+# Starts the training job using the training data you uploaded (train.csv).
+# SageMaker will:
+#  Launch a training container
+#  Feed the training data to XGBoost
+#  Optimize the model weights
+#  Save the final model to the output_path in S3
 xgb.fit({"train": TrainingInput(s3_train_path, content_type="csv")})
 print("✅ Model training completed.")
