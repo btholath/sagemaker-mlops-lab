@@ -41,15 +41,15 @@ record_identifier = "incident"
 event_time_feature = "timestamp"
 
 feature_group = FeatureGroup(name=feature_group_name, sagemaker_session=session)
-feature_group.load_feature_definitions(data_frame=df)
+feature_group.load_feature_definitions(data_frame=df) # Registering the schema from a Pandas DataFrame
 
-# Create the Feature Group
+# Create the Feature Group (Writes the schema to SageMaker Feature Store)
 feature_group.create(
-    s3_uri=f"s3://{bucket}/{prefix}/feature-store/ingest/",
+    s3_uri=f"s3://{bucket}/{prefix}/feature-store/ingest/", # Sets up offline (S3)
     record_identifier_name=record_identifier,
     event_time_feature_name=event_time_feature,
     role_arn=role,
-    enable_online_store=True
+    enable_online_store=True #online (real-time) storage backends
 )
 
 # Wait for creation to complete
