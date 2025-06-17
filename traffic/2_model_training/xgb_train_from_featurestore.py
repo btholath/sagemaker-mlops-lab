@@ -21,6 +21,7 @@ import sagemaker
 from sagemaker.feature_store.feature_group import FeatureGroup
 from sagemaker.inputs import TrainingInput
 from sagemaker.xgboost.estimator import XGBoost
+from sagemaker.estimator import Estimator
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from dotenv import load_dotenv
@@ -105,6 +106,12 @@ s3_train_path = session.upload_data("train.csv", bucket=bucket, key_prefix=f"{pr
 # Train Model
 # trains a machine learning model using Amazon SageMaker and the XGBoost algorithm.
 # Here's the CSV file I uploaded to S3. Use a smart algorithm called XGBoost to learn from it. Spin up a virtual machine (ml.m5.large) to do the work. Once done, save the model in this S3 bucket.
+container_uri = sagemaker.image_uris.retrieve(
+    framework="xgboost",
+    region=region,
+    version="1.3-1"
+)
+"""
 xgb = XGBoost(
     entry_point=None,   # No custom script; use SageMaker's built-in XGBoost container
     framework_version="1.3-1",  # Specifies XGBoost version
@@ -116,7 +123,19 @@ xgb = XGBoost(
     num_round=100,  # Number of boosting rounds (iterations)
     sagemaker_session=session  # SageMaker session context
 )
-
+"""
+xgb = Estimator(
+    image_uri=container_uri,
+    role=role,
+    instance_count=1,
+    instance_type="ml.m5.large",
+    output_path=f"s3://{bucket}/{prefix}/output",
+    sagemaker_session=session,
+    hyperparameters={
+        "objective": "binary:logistic",
+        "num_round": 100,
+    }
+)
 # Starts the training job using the training data you uploaded (train.csv).
 # SageMaker will:
 #  Launch a training container
