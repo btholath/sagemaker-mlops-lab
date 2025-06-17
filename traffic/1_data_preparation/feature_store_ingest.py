@@ -33,7 +33,13 @@ df = pd.read_csv(csv_path)
 # Convert timestamp column to ISO 8601 string
 print(df["timestamp"].head())
 #df["timestamp"] = pd.to_datetime(df["timestamp"]).astype(str)
-df["timestamp"] = pd.to_datetime(df["timestamp"], format="%m/%d/%y %H:%M").astype(str)
+#df["timestamp"] = pd.to_datetime(df["timestamp"], format="%m/%d/%y %H:%M").astype(str)
+
+# # Original timestamp format: 1/1/23 0:00
+df["timestamp"] = pd.to_datetime(df["timestamp"], format="%m/%d/%y %H:%M")
+# # Convert to required ISO 8601 format
+df["timestamp"] = df["timestamp"].dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+
 
 
 # Define FeatureGroup
@@ -64,3 +70,10 @@ while status != "Created":
     time.sleep(10)
 
 print(f"✅ Feature Group '{feature_group_name}' created successfully.")
+
+
+# 🔄 Ingest data into Feature Store
+print(f"📥 Ingesting {len(df)} records into Feature Store...")
+feature_group.ingest(data_frame=df, max_workers=3, wait=True)
+
+print("✅ Data ingestion completed successfully.")

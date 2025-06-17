@@ -27,7 +27,7 @@ from dotenv import load_dotenv
 import os
 
 # Load environment variables
-load_dotenv(dotenv_path="traffic/.env")
+load_dotenv(dotenv_path="../.env")
 
 region = os.getenv("AWS_REGION")
 role = os.getenv("SAGEMAKER_ROLE")
@@ -43,11 +43,18 @@ session = sagemaker.Session()
 feature_group = FeatureGroup(name=feature_group_name, sagemaker_session=session)
 query = feature_group.athena_query()
 query_string = f'SELECT * FROM "{query.table_name}"'
+print(query_string)
 query.run(query_string=query_string, output_location=f"s3://{bucket}/{prefix}/athena/")
 query.wait()
 
 # Loads data into a Pandas DataFrame, Drops rows with missing values.
 df = query.as_dataframe()
+print(f"📊 Records retrieved from Feature Store: {len(df)}")
+
+if df.empty:
+    raise ValueError("❌ No data retrieved from Feature Store via Athena. Please verify the feature group and ingestion.")
+
+print(f"🧾 Columns in dataframe: {df.columns.tolist()}")
 
 # Row-wise deletion of any observation (record) containing NaN.
 # Helps prevent training errors due to incomplete feature vectors.
