@@ -1,3 +1,4 @@
+import time
 import boto3
 import os
 from dotenv import load_dotenv
@@ -49,4 +50,52 @@ for job in training_jobs:
     except Exception as e:
         print(f"❌ Failed to delete training job {job_name}: {e}")
 
-        
+
+sagemaker = boto3.client("sagemaker", region_name=region)
+
+def stop_and_delete_training_jobs(prefix=None):
+    print("🔍 Listing SageMaker training jobs...")
+    paginator = sagemaker.get_paginator("list_training_jobs")
+    training_jobs = []
+
+    for page in paginator.paginate():
+        for job in page["TrainingJobSummaries"]:
+            name = job["TrainingJobName"]
+            if prefix and not name.startswith(prefix):
+                continue
+            training_jobs.append(job)
+
+    for job in training_jobs:
+        job_name = job["TrainingJobName"]
+        status = job["TrainingJobStatus"]
+        print(f"➡️ Processing training job: {job_name} (status: {status})")
+
+        # Stop job if it's running
+        if status in ["InProgress", "Stopping"]:
+            print(f"⏹️ Stopping job: {job_name}")
+            sagemaker.stop_training_job(TrainingJobName=job_name)
+            # Wait for the job to stop
+            while True:
+                desc = sagemaker.describe_training_job(TrainingJobName=job_name)
+                if desc["TrainingJobStatus"] in ["Stopped", "Failed", "Completed"]:
+                    print(f"✅ Job {job_name} has stopped.")
+                    break
+                print(f"⏳ Waiting for job {job_name} to stop...")
+                time.sleep(10)
+
+        # Delete associated model (optional, assumes model name == job name)
+        try:
+            sagemaker.delete_model(ModelName=job_name)
+            print(f"🗑️ Deleted model: {job_name}")
+        except sagemaker.exceptions.ClientError as e:
+            if "Could not find model" in str(e):
+                print(f"⚠️ No model found for: {job_name}")
+            else:
+                print(f"❌ Error deleting model {job_name}: {e}")
+
+        # Optionally: remove output artifacts from S3 if you track them
+
+    print("✅ Cleanup completed for training jobs and associated models.")
+
+# Run cleanup
+stop_and_delete_training_jobs(prefix="sagemaker-xgboost")  # change/remove prefix as needed
