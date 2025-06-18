@@ -1,5 +1,12 @@
 """
 Send sample predictions to the deployed endpoint using Boto3 Predictor.
+This script will:
+
+Connect to the deployed endpoint using the Predictor class
+
+Send test samples (from validation.csv) for prediction
+
+Print the returned inference results
 """
 
 import boto3

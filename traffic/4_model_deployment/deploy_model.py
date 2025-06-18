@@ -1,5 +1,12 @@
 """
 Deploy the trained XGBoost model to a SageMaker endpoint.
+This script will:
+
+Load your model from S3 (model.tar.gz)
+
+Deploy it to a new or existing SageMaker endpoint using the endpoint name from your .env file
+
+Provision the endpoint on an instance like ml.m5.large
 """
 
 import sagemaker
@@ -19,7 +26,8 @@ endpoint_name = os.getenv("ENDPOINT_NAME")
 session = sagemaker.Session()
 
 # Model artifact location
-model_artifact = f"s3://{bucket}/{prefix}/output/xgboost-traffic-local/output/model.tar.gz"
+#model_artifact = f"s3://{bucket}/{prefix}/output/xgboost-traffic-local/output/model.tar.gz"
+model_artifact = f"s3://{bucket}/{prefix}/output/sagemaker-xgboost-2025-06-18-16-59-11-656/output/model.tar.gz"
 
 # Deploy
 xgb_model = XGBoostModel(model_data=model_artifact,

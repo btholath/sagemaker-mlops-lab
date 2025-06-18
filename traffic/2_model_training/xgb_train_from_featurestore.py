@@ -100,7 +100,7 @@ X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_st
 # Combines them column-wise into a single DataFrame where y_train is the first column and the features follow.
 # This format (label, feature1, feature2, ..., featureN) is required for XGBoost’s built-in CSV training format.
 train_data = pd.concat([y_train, X_train], axis=1)
-train_data.to_csv("train.csv", index=False, header=False)
+train_data.to_csv("train.csv", index=False, header=True)
 s3_train_path = session.upload_data("train.csv", bucket=bucket, key_prefix=f"{prefix}/train")
 
 # Train Model
