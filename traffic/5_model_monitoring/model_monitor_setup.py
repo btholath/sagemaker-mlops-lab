@@ -32,8 +32,3 @@ data_capture_config = DataCaptureConfig(
 predictor.data_capture_config = data_capture_config
 
 print("✅ Model monitoring enabled on endpoint.")
-
-
-# Save the updated monitoring script
-monitor_script_path.write_text(updated_monitor_script)
-monitor_script_path.as_posix()

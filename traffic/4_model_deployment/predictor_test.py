@@ -27,8 +27,3 @@ test_sample = validation_df.iloc[:5].values
 preds = predictor.predict(test_sample)
 print("📈 Predictions:")
 print(preds)
-
-
-# Save the updated predictor script
-predictor_script_path.write_text(updated_predictor_script)
-predictor_script_path.as_posix()

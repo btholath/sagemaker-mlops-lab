@@ -34,7 +34,3 @@ predictor = xgb_model.deploy(
 )
 
 print(f"✅ Endpoint deployed: {predictor.endpoint_name}")
-
-# Save the updated deployment script
-deployment_script_path.write_text(updated_deployment_script)
-deployment_script_path.as_posix()
