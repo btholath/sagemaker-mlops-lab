@@ -56,6 +56,12 @@ if __name__ == "__main__":
         val_df.to_csv(val_output_path, index=False)
         print(f"📁 Validation set saved to {val_output_path}")
 
+        s3 = boto3.client("s3")
+        bucket = "sagemaker-traffic-prediction-bucket"
+        key = "traffic-pipeline/validation/validation.csv"
+        s3.upload_file(val_output_path, bucket, key)
+        print(f"✅ Uploaded validation.csv to s3://{bucket}/{key}")
+
         # Create DMatrix for XGBoost
         dtrain = xgb.DMatrix(X_train, label=y_train)
         dval = xgb.DMatrix(X_val, label=y_val)
