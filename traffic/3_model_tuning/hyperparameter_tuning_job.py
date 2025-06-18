@@ -1,40 +1,51 @@
 """
-Run a hyperparameter tuning job for XGBoost using SageMaker SDK locally.
+Run a hyperparameter tuning job for XGBoost using SageMaker SDK.
 """
 
-import sagemaker
-from sagemaker.tuner import HyperparameterTuner, IntegerParameter, ContinuousParameter
-from sagemaker.inputs import TrainingInput
-from sagemaker.xgboost.estimator import XGBoost
-from dotenv import load_dotenv
 import os
+from dotenv import load_dotenv
+import sagemaker
+from sagemaker.inputs import TrainingInput
+from sagemaker.tuner import HyperparameterTuner, IntegerParameter, ContinuousParameter
+from sagemaker.xgboost.estimator import XGBoost
 
 # Load environment variables
-load_dotenv(dotenv_path="traffic/.env")
+load_dotenv("../.env")
 
 region = os.getenv("AWS_REGION")
 role = os.getenv("SAGEMAKER_ROLE")
 bucket = os.getenv("S3_BUCKET")
 prefix = os.getenv("S3_PREFIX")
 
+# Initialize SageMaker session
 session = sagemaker.Session()
 
-# Reuse training input path
-s3_train_path = f"s3://{bucket}/{prefix}/train/train.csv"
+# Training data location
+s3_train_path = f"s3://{bucket}/{prefix}/train"
 
-# Estimator
-xgb = XGBoost(
-    entry_point=None,
+# Define XGBoost estimator
+xgb_estimator = XGBoost(
+    entry_point="train_script.py",  # ✅ Must be the script filename
     framework_version="1.3-1",
     instance_type="ml.m5.large",
     instance_count=1,
     output_path=f"s3://{bucket}/{prefix}/output",
     role=role,
-    objective="binary:logistic",
-    sagemaker_session=session
+    sagemaker_session=session,
+    hyperparameters={
+        "objective": "binary:logistic",
+        "eval_metric": "auc",
+        "num_round": 100
+    },
+    metric_definitions=[
+        {
+            "Name": "validation:auc",
+            "Regex": ".*\\[[0-9]+\\].*validation-auc:([0-9\\.]+)"
+        }
+    ]
 )
 
-# Hyperparameter ranges
+# Define hyperparameter ranges
 hyperparameter_ranges = {
     "max_depth": IntegerParameter(3, 10),
     "eta": ContinuousParameter(0.1, 0.5),
@@ -43,9 +54,9 @@ hyperparameter_ranges = {
     "subsample": ContinuousParameter(0.5, 1)
 }
 
-# Objective
+# Set up hyperparameter tuning job
 tuner = HyperparameterTuner(
-    estimator=xgb,
+    estimator=xgb_estimator,
     objective_metric_name="validation:auc",
     hyperparameter_ranges=hyperparameter_ranges,
     objective_type="Maximize",
@@ -56,8 +67,3 @@ tuner = HyperparameterTuner(
 # Start tuning job
 tuner.fit({"train": TrainingInput(s3_train_path, content_type="csv")})
 print("🚀 Hyperparameter tuning job started.")
-
-
-# Save the updated script
-tuning_script_path.write_text(updated_tuning_script)
-tuning_script_path.as_posix()
