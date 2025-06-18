@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 import os
 
 # Load environment variables
-load_dotenv(dotenv_path="traffic/.env")
+load_dotenv(dotenv_path="../.env")
 
 endpoint_name = os.getenv("ENDPOINT_NAME")
 

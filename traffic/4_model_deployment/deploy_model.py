@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 import os
 
 # Load environment variables
-load_dotenv(dotenv_path="traffic/.env")
+load_dotenv(dotenv_path="../.env")
 
 region = os.getenv("AWS_REGION")
 role = os.getenv("SAGEMAKER_ROLE")
