@@ -69,6 +69,11 @@ xgb_estimator = XGBoost(
 # ─────────────────────────────────────────────────────────────
 # Define hyperparameter search space
 # ─────────────────────────────────────────────────────────────
+# max_depth - The maximum depth per tree. A deeper tree might increase the performance, but also the complexity and chances to overfit.
+# eta - learning rate
+# gamma - Gamma is a pseudo-regularisation parameter (Lagrangian multiplier), and depends on the other parameters. The higher Gamma is, the higher the regularization.
+# subsample - Represents the fraction of observations to be sampled for each tree. A lower values prevent overfitting but might lead to under-fitting.
+
 logger.info("Defining hyperparameter search ranges...")
 hyperparameter_ranges = {
     "max_depth": IntegerParameter(3, 10),
