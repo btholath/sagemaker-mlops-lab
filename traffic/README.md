@@ -27,12 +27,12 @@ touch traffic/flows/FeatureStoreExport.flow
 
 ---
 
-Option 1: Local development using Boto3 + SageMaker SDK:
-📁 traffic/1_data_preparation/feature_store_ingest.py
-    ✅ Reads traffic_data.csv
-    ✅ Converts timestamp to ISO format
-    ✅ Creates a Feature Group in SageMaker
-    ✅ Uploads all records to the Feature Store
+# Option 1: Local development using Boto3 + SageMaker SDK:
+- 📁 traffic/1_data_preparation/feature_store_ingest.py
+    - ✅ Reads traffic_data.csv
+    - ✅ Converts timestamp to ISO format
+    - ✅ Creates a Feature Group in SageMaker
+    - ✅ Uploads all records to the Feature Store
 
 📁 traffic/2_model_training/xgb_train_from_featurestore.py
     ✅ Queries the Feature Store via Athena
