@@ -34,56 +34,59 @@ touch traffic/flows/FeatureStoreExport.flow
     - ✅ Creates a Feature Group in SageMaker
     - ✅ Uploads all records to the Feature Store
 
-📁 traffic/2_model_training/xgb_train_from_featurestore.py
-    ✅ Queries the Feature Store via Athena
-    ✅ Loads and cleans data
-    ✅ Splits data for training
-    ✅ Trains XGBoost with ml.m5.large
-    ✅ Uploads training CSV to S3
+- 📁 traffic/2_model_training/xgb_train_from_featurestore.py
+    - ✅ Queries the Feature Store via Athena
+    - ✅ Loads and cleans data
+    - ✅ Splits data for training
+    - ✅ Trains XGBoost with ml.m5.large
+    - ✅ Uploads training CSV to S3
 
-📁 traffic/3_model_tuning/hyperparameter_tuning_job.py
-    ✅ Defines a tuning job using SageMaker’s HPO
-    ✅ Optimizes max_depth, eta, gamma, etc.
-    ✅ Metric: validation:auc
-    ✅ Launches max_jobs=10, parallel=2
+- 📁 traffic/3_model_tuning/hyperparameter_tuning_job.py
+    - ✅ Defines a tuning job using SageMaker’s HPO
+    - ✅ Optimizes max_depth, eta, gamma, etc.
+    - ✅ Metric: validation:auc
+    - ✅ Launches max_jobs=10, parallel=2
 
-📁 traffic/4_model_deployment/deploy_model.py
-    ✅ Loads model artifact from S3
-    ✅ Deploys as a real-time SageMaker endpoint
+- 📁 traffic/4_model_deployment/deploy_model.py
+    - ✅ Loads model artifact from S3
+    - ✅ Deploys as a real-time SageMaker endpoint
 
-📁 traffic/4_model_deployment/predictor_test.py
-    ✅ Reads validation.csv
-    ✅ Sends sample rows for prediction
-    ✅ Prints predictions from the endpoint
+- 📁 traffic/4_model_deployment/predictor_test.py
+    - ✅ Reads validation.csv
+    - ✅ Sends sample rows for prediction
+    - ✅ Prints predictions from the endpoint
 
-📁 traffic/5_model_monitoring/model_monitor_setup.py
-    ✅ Enables data capture on deployed endpoint
-    ✅ Stores requests/responses in S3
-    ✅ Prepares for future baseline drift detection
+- 📁 traffic/5_model_monitoring/model_monitor_setup.py
+    - ✅ Enables data capture on deployed endpoint
+    - ✅ Stores requests/responses in S3
+    - ✅ Prepares for future baseline drift detection
 
 
-📌 List of python packages:
-✅ boto3: Required for AWS client access (e.g., S3, SageMaker Feature Store)
-✅ sagemaker: AWS SageMaker Python SDK
-✅ pandas: For CSV handling, dataframes, transformations
-✅ scikit-learn: For train/test split and metrics
-✅ xgboost: For model training using built-in or local mode
-✅ python-dotenv: For loading .env configurations
+# 📌 List of python packages:
+- ✅ boto3: Required for AWS client access (e.g., S3, SageMaker Feature Store)
+- ✅ sagemaker: AWS SageMaker Python SDK
+- ✅ pandas: For CSV handling, dataframes, transformations
+- ✅ scikit-learn: For train/test split and metrics
+- ✅ xgboost: For model training using built-in or local mode
+- ✅ python-dotenv: For loading .env configurations
 
 
 # Setup python virtual environment
+```bash
 @btholath ➜ /workspaces/sagemaker-mlops-lab (main) $ python -m venv .venv
 @btholath ➜ /workspaces/sagemaker-mlops-lab (main) $ source .venv/bin/activate
 @btholath ➜ /workspaces/sagemaker-mlops-lab (main) $ pip install --upgrade pip
 (.venv) @btholath ➜ /workspaces/sagemaker-mlops-lab (main) $ pip install -r ./traffic/requirements.txt
-
+```
 
 # cleanup aws resources
+```bash
 aws sagemaker delete-feature-group --feature-group-name traffic-feature-group-local
 aws sagemaker list-feature-groups
-
+```        
 
 # Setup AWS CLI
+```bash
 (.venv) @btholath ➜ /workspaces
 (.venv) @btholath ➜ /workspacescurl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 (.venv) @btholath ➜ /workspacesunzip awscliv2.zip
@@ -94,30 +97,29 @@ export PATH=$PATH:~/.local/bin
 (.venv) @btholath ➜ /workspaces/usr/local/bin/aws --version 
 (.venv) @btholath ➜ /workspaces $ aws configure
 (.venv) @btholath ➜ /workspaces $ aws sts get-caller-identity
-
+```
 
 # Pre-requisites
-✅ Global Setup (Before Any Script)
-1. Environment
-Python 3.8+ installed
-Virtual environment activated (python -m venv .venv && source .venv/bin/activate)
-Required packages installed:
-pip install -r traffic/requirements.txt
+- Global Setup (Before Any Script)
+    - 1. Environment
+    -   Python 3.8+ installed
+    - Virtual environment activated (python -m venv .venv && source .venv/bin/activate)
+      Required packages installed: pip install -r traffic/requirements.txt
 
-2. .env File Present at traffic/.env
-AWS_REGION=us-west-2
-SAGEMAKER_ROLE=arn:aws:iam::<your-account>:role/<SageMakerExecutionRole>
-S3_BUCKET=sagemaker-traffic-prediction-bucket
-S3_PREFIX=traffic-pipeline
-FEATURE_GROUP_NAME=traffic-feature-group-local
-ENDPOINT_NAME=xgboost-traffic-local-endpoint
+- 2 .env File Present at traffic/.env
+    AWS_REGION=us-west-2
+    SAGEMAKER_ROLE=arn:aws:iam::<your-account>:role/<SageMakerExecutionRole>
+    S3_BUCKET=sagemaker-traffic-prediction-bucket
+    S3_PREFIX=traffic-pipeline
+    FEATURE_GROUP_NAME=traffic-feature-group-local
+    ENDPOINT_NAME=xgboost-traffic-local-endpoint
 
-3. IAM Role Permissions (SAGEMAKER_ROLE)
-Make sure the IAM role has access to:
-AmazonS3FullAccess
-AmazonSageMakerFullAccess
-AthenaFullAccess
-GlueFullAccess (for Feature Store query)
+- 3. IAM Role Permissions (SAGEMAKER_ROLE)
+    Make sure the IAM role has access to:
+    AmazonS3FullAccess
+    AmazonSageMakerFullAccess
+    AthenaFullAccess
+    GlueFullAccess (for Feature Store query)
 
 #🚦 Script-wise Prerequisites
 # 📁 1_data_preparation/feature_store_ingest.py
