@@ -39,8 +39,8 @@ The training finished quickly and successfully — AWS SageMaker did all the hea
 sagemaker.config INFO - Not applying SDK defaults from location: /etc/xdg/sagemaker/config.yaml
 sagemaker.config INFO - Not applying SDK defaults from location: /home/codespace/.config/sagemaker/config.yaml
 SELECT * FROM "traffic_feature_group_local_1750179378"
-📊 Records retrieved from Feature Store: 697
-🧾 Columns in dataframe: ['timestamp', 'sensor_id', 'vehicle_count', 'avg_speed', 'weather_condition', 'incident', 'write_time', 'api_invocation_time', 'is_deleted']
+# 📊 Records retrieved from Feature Store: 697
+# 🧾 Columns in dataframe: ['timestamp', 'sensor_id', 'vehicle_count', 'avg_speed', 'weather_condition', 'incident', 'write_time', 'api_invocation_time', 'is_deleted']
 INFO:sagemaker:Creating training-job with name: sagemaker-xgboost-2025-06-17-17-08-58-270
 2025-06-17 17:09:00 Starting - Starting the training job...
 2025-06-17 17:09:14 Starting - Preparing the instances for training...
@@ -171,18 +171,18 @@ Returning the value itself
 2025-06-17 17:11:27 Completed - Training job completed
 Training seconds: 110
 Billable seconds: 110
-✅ Model training completed.
+# ✅ Model training completed.
 (.venv) @btholath ➜ /workspaces/sagemaker-mlops-lab/traffic/2_model_training (main) $ 
 ```      
 
 ```bash
 (.venv) @btholath ➜ /workspaces/sagemaker-mlops-lab/traffic/2_model_training (main) $ python validate_model_from_csv.py 
 📄 Loaded 557 records from train.csv
-✅ Accuracy: 0.9285714285714286
-✅ Confusion Matrix:
+# ✅ Accuracy: 0.9285714285714286
+# ✅ Confusion Matrix:
  [[103   1]
  [  7   1]]
-✅ Classification Report:
+# ✅ Classification Report:
                precision    recall  f1-score   support
 
            0       0.94      0.99      0.96       104
@@ -197,17 +197,15 @@ weighted avg       0.91      0.93      0.91       112
 
 Your model validation script has successfully run, and here’s what the results indicate:
 
-📊 Results Summary
-Metric	Value	Meaning
-Accuracy	0.93	93% of total predictions are correct. Overall performance is strong.
-Confusion Matrix	[[103, 1], [7, 1]]	Of the 104 actual “0” cases (no incident), 103 were predicted correctly; of the 8 actual “1” cases (incident), only 1 was predicted correctly.
-Precision (Class 1)	0.50	When the model predicted an incident, it was correct only 50% of the time.
-Recall (Class 1)	0.12	The model only caught 12% of actual incidents — misses most incidents.
-F1 Score (Class 1)	0.20	Indicates poor performance for detecting incidents, despite high overall accuracy.
+#📊 Results Summary
+ - Metric	Value	Meaning
+ - Accuracy	0.93	93% of total predictions are correct. Overall performance is strong.
+ - Confusion Matrix	[[103, 1], [7, 1]]	Of the 104 actual “0” cases (no incident), 103 were predicted correctly; of the 8 actual “1” cases (incident), only 1 was predicted correctly.
+ - Precision (Class 1)	0.50	When the model predicted an incident, it was correct only 50% of the time.
+ - Recall (Class 1)	0.12	The model only caught 12% of actual incidents — misses most incidents.
+ - F1 Score (Class 1)	0.20	Indicates poor performance for detecting incidents, despite high overall accuracy.
 
-⚠️ What's Going On?
-This is a classic case of imbalanced data — too many "0" (no incident) vs very few "1" (incident) labels.
-
-The model learns to predict the majority class ("0") very well.
-
-But it struggles with the minority class ("1"), which may be crucial in a traffic use case
+# ⚠️ What's Going On?
+ - This is a classic case of imbalanced data — too many "0" (no incident) vs very few "1" (incident) labels.
+ - The model learns to predict the majority class ("0") very well.
+ - But it struggles with the minority class ("1"), which may be crucial in a traffic use case
